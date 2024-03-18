@@ -1,0 +1,78 @@
+
+
+"""
+1.  @#@@
+
+2.  #@@ / @@#
+    @       @
+    
+3.  #@
+    @@
+    
+4.  @#  /  #@
+     @@   @@
+
+5.  @#@
+     @
+
+"""
+# 超參數設定
+
+BLOCK_SIZE = 20
+BLOCK_GAP = 2
+BLOCK_H_COUNT = 40
+BLOCK_W_COUNT = 20
+
+WINDOWS_MARGIN = 10
+WINDOWS_HITHT = BLOCK_H_COUNT*BLOCK_SIZE + 2*WINDOWS_MARGIN
+WINDOWS_WIDTH = BLOCK_W_COUNT*BLOCK_SIZE + 2*WINDOWS_MARGIN
+
+# 座標 class
+class Position(object):
+    def __init__(self,x = 0,y = 0) -> None:
+        self.x = x
+        self.y = y
+        
+    def __add__(self,other):
+        n = Position(self.x + other.x,self.y + other.y)
+        return n
+
+    def __sub__(self,other):
+        n = Position(self.x - other.x,self.y - other.y)
+        return n
+    
+
+# 虛構block: 描述基本功能(用來被繼承)
+class tetris_block(object):
+    def __init__(self,blocks_pos) -> None:
+        self.blocks_pos = blocks_pos # 座標組[旋轉中心,其餘座標...]
+    
+    def rotate(self):# (右)旋
+        center = self.blocks_pos[0] # 旋轉中心 
+        new_pos = [] # 新其餘座標
+        for b in self.blocks_pos[1:]: # 其餘座標
+            delta = b - center
+            new_b = Position(center.x - delta.y, center.y + delta.x)
+            new_pos.append(new_b)
+        self.blocks_pos[1:] = new_pos # 更新其餘座標
+    
+    def down(self):# 下降
+        new_pos = []
+        for b in self.blocks_pos:
+            new_b = b + Position(0,1)
+            new_pos.append(new_b)
+        self.blocks_pos = new_pos # 更新其餘座標
+    
+    def left(self):# 下降
+        new_pos = []
+        for b in self.blocks_pos:
+            new_b = b - Position(1,0)
+            new_pos.append(new_b)
+        self.blocks_pos = new_pos # 更新其餘座標
+    
+    def right(self):# 下降
+        new_pos = []
+        for b in self.blocks_pos:
+            new_b = b + Position(1,0)
+            new_pos.append(new_b)
+        self.blocks_pos = new_pos # 更新其餘座標
