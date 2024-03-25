@@ -1,4 +1,5 @@
-
+from Position import Position
+from config import *
 
 """
 1.  @#@@
@@ -16,32 +17,6 @@
      @
 
 """
-# 超參數設定
-
-BLOCK_SIZE = 20
-BLOCK_GAP = 2
-BLOCK_H_COUNT = 40
-BLOCK_W_COUNT = 20
-
-WINDOWS_MARGIN = 10
-WINDOWS_HITHT = BLOCK_H_COUNT*BLOCK_SIZE + 2*WINDOWS_MARGIN
-WINDOWS_WIDTH = BLOCK_W_COUNT*BLOCK_SIZE + 2*WINDOWS_MARGIN
-
-# 座標 class
-class Position(object):
-    def __init__(self,x = 0,y = 0) -> None:
-        self.x = x
-        self.y = y
-        
-    def __add__(self,other):
-        n = Position(self.x + other.x,self.y + other.y)
-        return n
-
-    def __sub__(self,other):
-        n = Position(self.x - other.x,self.y - other.y)
-        return n
-    
-
 # 虛構block: 描述基本功能(用來被繼承)
 class tetris_block(object):
     def __init__(self,blocks_pos) -> None:

@@ -1,12 +1,22 @@
 import pygame
 from Tetris import *
+from Position import Position
+from config import *
+from StackBlocks import *
 
-def draw_blocks(screen,blocks:tetris_block):
+def draw_blocks(screen,blocks:tetris_block = None,stack_blocks:StackBlocks = None):
     screen.fill((0,0,0))
-    for b in blocks.blocks_pos:
-        # 20*20
-        pygame.draw.rect(screen,(255,255,255),
-            [b.x * BLOCK_SIZE, b.y * BLOCK_SIZE ,BLOCK_SIZE-BLOCK_GAP,BLOCK_SIZE-BLOCK_GAP],width=1)
+    if blocks is not None: # 單獨下墜的方塊
+        for b in blocks.blocks_pos:
+            # 20*20
+            pygame.draw.rect(screen,(255,255,255),
+                [b.x * BLOCK_SIZE, b.y * BLOCK_SIZE ,BLOCK_SIZE-BLOCK_GAP,BLOCK_SIZE-BLOCK_GAP],width=1)
+    if stack_blocks is not None: # 底層堆疊的方塊
+        for y,line in enumerate(stack_blocks.blocks): # 取得 行數(y), 該行list
+            for x,b in enumerate(line): # 取得 個數(x), 該方塊
+                if b == 1: # 需要塊方塊
+                    pygame.draw.rect(screen,(255,255,0),
+                        [x * BLOCK_SIZE, y * BLOCK_SIZE ,BLOCK_SIZE-BLOCK_GAP,BLOCK_SIZE-BLOCK_GAP],width=1)
     pygame.display.update()
     
 def main():
@@ -20,7 +30,8 @@ def main():
     pygame.display.update()
     
     blocks = tetris_block([Position(11,10),Position(10,10),Position(12,10),Position(10,11)])
-    draw_blocks(screen,blocks)
+    stack_blocks = StackBlocks()
+    draw_blocks(screen,blocks,stack_blocks)
 
     # 遊戲循環
     playing = True
@@ -33,16 +44,17 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.dict["key"] == pygame.K_RIGHT:
                     blocks.right()
-                    draw_blocks(screen,blocks)
                 if event.dict["key"] == pygame.K_LEFT:
                     blocks.left()
-                    draw_blocks(screen,blocks)
                 if event.dict["key"] == pygame.K_DOWN:
                     blocks.down()
-                    draw_blocks(screen,blocks)
                 if event.dict["key"] == pygame.K_UP:
                     blocks.rotate()
-                    draw_blocks(screen,blocks)
+                    
+                if stack_blocks.check_collide(blocks):
+                    stack_blocks.stack_on(blocks.blocks_pos) # 堆疊上去
+                    blocks = tetris_block([Position(11,10),Position(10,10),Position(12,10),Position(10,11)]) # 產生新的下墜方塊
+                draw_blocks(screen,blocks,stack_blocks)
                     
         
                     
