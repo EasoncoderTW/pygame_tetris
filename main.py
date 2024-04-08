@@ -10,13 +10,13 @@ def draw_blocks(screen,blocks:tetris_block = None,stack_blocks:StackBlocks = Non
         for b in blocks.blocks_pos:
             # 20*20
             pygame.draw.rect(screen,(255,255,255),
-                [b.x * BLOCK_SIZE, b.y * BLOCK_SIZE ,BLOCK_SIZE-BLOCK_GAP,BLOCK_SIZE-BLOCK_GAP],width=1)
+                [WINDOWS_MARGIN+b.x * BLOCK_SIZE, WINDOWS_MARGIN+b.y * BLOCK_SIZE ,BLOCK_SIZE-BLOCK_GAP,BLOCK_SIZE-BLOCK_GAP],width=1)
     if stack_blocks is not None: # 底層堆疊的方塊
         for y,line in enumerate(stack_blocks.blocks): # 取得 行數(y), 該行list
             for x,b in enumerate(line): # 取得 個數(x), 該方塊
                 if b == 1: # 需要塊方塊
                     pygame.draw.rect(screen,(255,255,0),
-                        [x * BLOCK_SIZE, y * BLOCK_SIZE ,BLOCK_SIZE-BLOCK_GAP,BLOCK_SIZE-BLOCK_GAP],width=1)
+                        [WINDOWS_MARGIN+x * BLOCK_SIZE, WINDOWS_MARGIN+y * BLOCK_SIZE ,BLOCK_SIZE-BLOCK_GAP,BLOCK_SIZE-BLOCK_GAP],width=1)
     pygame.display.update()
     
 def main():
@@ -29,9 +29,12 @@ def main():
     # 更新視窗畫面
     pygame.display.update()
     
-    blocks = tetris_block([Position(11,10),Position(10,10),Position(12,10),Position(10,11)])
+    blocks = tetris_generator()
     stack_blocks = StackBlocks()
     draw_blocks(screen,blocks,stack_blocks)
+    
+    # 設定計時器
+    pygame.time.set_timer(DROP_EVENT,300) #300ms 觸發一次
 
     # 遊戲循環
     playing = True
@@ -41,20 +44,25 @@ def main():
             if event.type == pygame.QUIT: # 如果事件代號是 QUIT
                 playing = False # 結束遊戲循環
 
-            if event.type == pygame.KEYDOWN:
-                if event.dict["key"] == pygame.K_RIGHT:
+            if event.type == pygame.TEXTINPUT:
+                if event.dict["text"] == "d":
                     blocks.right()
-                if event.dict["key"] == pygame.K_LEFT:
+                if event.dict["text"] == "a":
                     blocks.left()
-                if event.dict["key"] == pygame.K_DOWN:
+                if event.dict["text"] == "s":
                     blocks.down()
-                if event.dict["key"] == pygame.K_UP:
+                if event.dict["text"] == "w":
                     blocks.rotate()
                     
-                if stack_blocks.check_collide(blocks):
-                    stack_blocks.stack_on(blocks.blocks_pos) # 堆疊上去
-                    blocks = tetris_block([Position(11,10),Position(10,10),Position(12,10),Position(10,11)]) # 產生新的下墜方塊
-                draw_blocks(screen,blocks,stack_blocks)
+            if event.type == DROP_EVENT:
+                blocks.down()
+                   
+            if stack_blocks.check_collide(blocks):
+                stack_blocks.stack_on(blocks.blocks_pos) # 堆疊上去
+                blocks = tetris_generator() # 產生新的下墜方塊
+            stack_blocks.eliminate() # 檢查並消除
+            draw_blocks(screen,blocks,stack_blocks)
+            
                     
         
                     

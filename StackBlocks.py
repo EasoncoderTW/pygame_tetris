@@ -17,7 +17,7 @@ class  StackBlocks(object):
             if sum(line) == BLOCK_W_COUNT: # 可消除
                 eliminate_lines_count += 1
             else:
-                new_blocks.append[line]
+                new_blocks.append(line)
         
         for i in range(eliminate_lines_count):
             new_blocks.insert(0, [0 for j in range(BLOCK_W_COUNT)]) # 補充在開頭

@@ -11,3 +11,6 @@ class Position(object):
     def __sub__(self,other):
         n = Position(self.x - other.x,self.y - other.y)
         return n
+    
+    def __str__(self):
+        return str((self.x,self.y))
