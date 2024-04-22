@@ -31,3 +31,6 @@ class  StackBlocks(object):
             if self.blocks[b.y + 1][b.x] == 1:  # 往下一格也被佔用了
                 return True
         return False
+    
+    def over_stack(self):
+        return sum(self.blocks[3]) > 0 #檢查是否堆疊超過高度
